@@ -16,12 +16,12 @@
 package io.zeebe.containers;
 
 import com.github.dockerjava.api.command.InspectContainerResponse;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.ZeebeClientBuilder;
-import io.camunda.zeebe.client.api.command.TopologyRequestStep1;
-import io.camunda.zeebe.client.api.response.Topology;
-import io.camunda.zeebe.client.impl.ZeebeClientFutureImpl;
-import io.camunda.zeebe.client.impl.response.TopologyImpl;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.CamundaClientBuilder;
+import io.camunda.client.api.command.TopologyRequestStep1;
+import io.camunda.client.api.response.Topology;
+import io.camunda.client.impl.CamundaClientFutureImpl;
+import io.camunda.client.impl.response.TopologyImpl;
 import io.camunda.zeebe.gateway.protocol.GatewayOuterClass.BrokerInfo;
 import io.camunda.zeebe.gateway.protocol.GatewayOuterClass.Partition;
 import io.camunda.zeebe.gateway.protocol.GatewayOuterClass.Partition.PartitionBrokerRole;
@@ -65,8 +65,8 @@ final class ZeebeTopologyWaitStrategyTest {
   private static final int PARTITIONS_COUNT = 3;
   private static final int REPLICATION_FACTOR = 3;
 
-  @Mock ZeebeClient client;
-  @Mock ZeebeClientBuilder builder;
+  @Mock CamundaClient client;
+  @Mock CamundaClientBuilder builder;
   @Mock TopologyRequestStep1 topologyRequest;
 
   @BeforeEach
@@ -80,10 +80,10 @@ final class ZeebeTopologyWaitStrategyTest {
   @Test
   void shouldWaitUntilACompleteTopologyResponse() {
     // given
-    final ZeebeClientFutureImpl<Topology, TopologyResponse> incompleteTopologyResponse =
+    final CamundaClientFutureImpl<Topology, TopologyResponse> incompleteTopologyResponse =
         newTopologyResponse(
             newTopology(BROKERS_COUNT - 1, PARTITIONS_COUNT - 1, DEFAULT_PARTITIONER));
-    final ZeebeClientFutureImpl<Topology, TopologyResponse> completeTopologyResponse =
+    final CamundaClientFutureImpl<Topology, TopologyResponse> completeTopologyResponse =
         newTopologyResponse(newCompleteTopology());
     final WaitStrategyTarget target = new ReachableTarget(1);
     final ZeebeTopologyWaitStrategy strategy = newCompleteWaitStrategy();
@@ -102,7 +102,7 @@ final class ZeebeTopologyWaitStrategyTest {
 
   @Test
   void shouldUseCustomGatewayPort() {
-    final ZeebeClientFutureImpl<Topology, TopologyResponse> topologyResponse =
+    final CamundaClientFutureImpl<Topology, TopologyResponse> topologyResponse =
         newTopologyResponse(newCompleteTopology());
     final ReachableTarget target = new ReachableTarget(1);
     final ZeebeTopologyWaitStrategy strategy = newCompleteWaitStrategy().forGatewayPort(2);
@@ -121,7 +121,7 @@ final class ZeebeTopologyWaitStrategyTest {
 
   @Test
   void shouldUseCorrectGatewayAddress() {
-    final ZeebeClientFutureImpl<Topology, TopologyResponse> topologyResponse =
+    final CamundaClientFutureImpl<Topology, TopologyResponse> topologyResponse =
         newTopologyResponse(newCompleteTopology());
     final ReachableTarget target = new ReachableTarget(1);
     final ZeebeTopologyWaitStrategy strategy = newCompleteWaitStrategy();
@@ -145,7 +145,7 @@ final class ZeebeTopologyWaitStrategyTest {
       final String testName,
       final TopologyResponse topology,
       final ZeebeTopologyWaitStrategy strategy) {
-    final ZeebeClientFutureImpl<Topology, TopologyResponse> topologyResponse =
+    final CamundaClientFutureImpl<Topology, TopologyResponse> topologyResponse =
         newTopologyResponse(topology);
     final ReachableTarget target = new ReachableTarget(1);
 
@@ -160,10 +160,10 @@ final class ZeebeTopologyWaitStrategyTest {
     Mockito.verify(topologyRequest, Mockito.atLeastOnce()).send();
   }
 
-  private ZeebeClientFutureImpl<Topology, TopologyResponse> newTopologyResponse(
+  private CamundaClientFutureImpl<Topology, TopologyResponse> newTopologyResponse(
       final TopologyResponse topology) {
-    final ZeebeClientFutureImpl<Topology, TopologyResponse> response =
-        new ZeebeClientFutureImpl<>(TopologyImpl::new);
+    final CamundaClientFutureImpl<Topology, TopologyResponse> response =
+        new CamundaClientFutureImpl<>(TopologyImpl::new);
     response.onNext(topology);
 
     return response;

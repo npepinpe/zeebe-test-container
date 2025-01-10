@@ -171,9 +171,9 @@ junit4 [here](https://www.testcontainers.org/test_framework_integration/junit_4/
 ```java
 package com.acme.zeebe;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
-import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.DeploymentEvent;
+import io.camunda.client.api.response.ProcessInstanceResult;
 import io.zeebe.containers.ZeebeContainer;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
@@ -189,8 +189,8 @@ public class MyFeatureTest {
   @Test
   public void shouldConnectToZeebe() {
     // given
-    final ZeebeClient client =
-      ZeebeClient.newClientBuilder()
+    final CamundaClient client =
+      CamundaClient.newClientBuilder()
         .grpcAddress(zeebeContainer.getGrpcAddress())
         .restAddress(zeebeContainer.getRestAddress())
         .usePlaintext()
@@ -228,9 +228,9 @@ extension [here](https://www.testcontainers.org/test_framework_integration/junit
 ```java
 package com.acme.zeebe;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
-import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.DeploymentEvent;
+import io.camunda.client.api.response.ProcessInstanceResult;
 import io.zeebe.containers.ZeebeContainer;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
@@ -248,8 +248,8 @@ public class MyFeatureTest {
   @Test
   void shouldConnectToZeebe() {
     // given
-    final ZeebeClient client =
-      ZeebeClient.newClientBuilder()
+    final CamundaClient client =
+      CamundaClient.newClientBuilder()
         .grpcAddress(zeebeContainer.getGrpcAddress())
         .restAddress(zeebeContainer.getRestAddress())
         .usePlaintext()
@@ -622,9 +622,9 @@ Here is a short example on how to set up a cluster for testing with junit5.
 ```java
 package com.acme.zeebe;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.BrokerInfo;
-import io.camunda.zeebe.client.api.response.Topology;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.BrokerInfo;
+import io.camunda.client.api.response.Topology;
 import io.zeebe.containers.cluster.ZeebeCluster;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -660,7 +660,7 @@ class ZeebeClusterWithGatewayExampleTest {
     final Topology topology;
 
     // when
-    try (final ZeebeClient client = cluster.newClientBuilder().build()) {
+    try (final CamundaClient client = cluster.newClientBuilder().build()) {
       topology = client.newTopologyRequest().send().join(5, TimeUnit.SECONDS);
     }
 
@@ -1146,8 +1146,8 @@ and waits for its completion:
 ```java
 package com.acme;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
 import io.camunda.zeebe.process.test.assertions.BpmnAssert;
@@ -1176,7 +1176,7 @@ final class ExampleTest {
     final ProcessInstanceEvent processInstance;
 
     // when
-    try (final ZeebeClient client = engine.createClient()) {
+    try (final CamundaClient client = engine.createClient()) {
       client.newDeployResourceCommand().addProcessModel(processModel, "process.bpmn").send().join();
       processInstance =
         client.newCreateInstanceCommand().bpmnProcessId("process").latestVersion().send().join();

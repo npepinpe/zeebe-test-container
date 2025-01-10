@@ -15,8 +15,8 @@
  */
 package io.zeebe.containers.cluster;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.ZeebeClientBuilder;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.CamundaClientBuilder;
 import io.zeebe.containers.ZeebeBrokerNode;
 import io.zeebe.containers.ZeebeGatewayNode;
 import io.zeebe.containers.ZeebeNode;
@@ -78,7 +78,7 @@ import org.testcontainers.lifecycle.Startables;
  *
  *     // when
  *     final Topology topology;
- *     try (final ZeebeClient client = cluster.newClientBuilder().build()) {
+ *     try (final CamundaClient client = cluster.newClientBuilder().build()) {
  *       topology = c.newTopologyRequest().send().join();
  *     }
  *
@@ -230,10 +230,10 @@ public class ZeebeCluster implements Startable {
    * @return a new client builder with the gateway and transport security pre-configured
    * @throws NoSuchElementException if there are no started gateways
    */
-  public ZeebeClientBuilder newClientBuilder() {
+  public CamundaClientBuilder newClientBuilder() {
     final ZeebeGatewayNode<?> gateway = getAvailableGateway();
 
-    return ZeebeClient.newClientBuilder()
+    return CamundaClient.newClientBuilder()
         .grpcAddress(gateway.getGrpcAddress())
         .restAddress(gateway.getRestAddress())
         .usePlaintext();

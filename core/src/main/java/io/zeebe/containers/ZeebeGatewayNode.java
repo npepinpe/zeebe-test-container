@@ -72,7 +72,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .gatewayAddress(container.getExternalGatewayAddress())
    *     .usePlaintext()
    *     .build();
@@ -93,7 +93,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .gatewayAddress(container.getInternalGatewayAddress())
    *     .usePlaintext()
    *     .build();
@@ -115,7 +115,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .restAddress(container.getInternalRestUrl())
    *     .usePlaintext()
    *     .build();
@@ -136,7 +136,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .restAddress(container.getInternalRestUrl("https"))
    *     .build();
    * }</pre>
@@ -157,7 +157,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .restAddress(container.getRestAddress())
    *     .usePlaintext()
    *     .build();
@@ -179,7 +179,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .restAddress(container.getExternalRestAddress("https"))
    *     .build();
    * }</pre>
@@ -199,7 +199,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .grpcAddress(container.getInternalGrpcAddress())
    *     .usePlaintext()
    *     .build();
@@ -220,7 +220,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .grpcAddress(container.getInternalGrpcAddress("https"))
    *     .build();
    * }</pre>
@@ -241,7 +241,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .grpcAddress(container.getGrpcAddress())
    *     .usePlaintext()
    *     .build();
@@ -263,7 +263,7 @@ public interface ZeebeGatewayNode<T extends GenericContainer<T> & ZeebeGatewayNo
    * <p>You can build your client like this:
    *
    * <pre>@{code
-   *   ZeebeClient.newClientBuilder()
+   *   CamundaClient.newClientBuilder()
    *     .grpcAddress(container.getGrpcAddress("https"))
    *     .build();
    * }</pre>

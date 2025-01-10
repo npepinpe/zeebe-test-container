@@ -15,9 +15,9 @@
  */
 package io.zeebe.containers.examples;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.BrokerInfo;
-import io.camunda.zeebe.client.api.response.Topology;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.BrokerInfo;
+import io.camunda.client.api.response.Topology;
 import io.zeebe.containers.ZeebeBrokerContainer;
 import io.zeebe.containers.ZeebeBrokerNode;
 import io.zeebe.containers.ZeebeGatewayContainer;
@@ -78,7 +78,7 @@ final class ClusterWithGatewayExampleTest {
 
     // when
     final Topology topology;
-    try (final ZeebeClient client = newZeebeClient(gatewayContainer)) {
+    try (final CamundaClient client = newZeebeClient(gatewayContainer)) {
       topology = client.newTopologyRequest().send().join(5, TimeUnit.SECONDS);
     }
 
@@ -121,8 +121,8 @@ final class ClusterWithGatewayExampleTest {
         .withEnv("ZEEBE_BROKER_CLUSTER_INITIALCONTACTPOINTS", initialContactPoints);
   }
 
-  private ZeebeClient newZeebeClient(final ZeebeGatewayContainer node) {
-    return ZeebeClient.newClientBuilder()
+  private CamundaClient newZeebeClient(final ZeebeGatewayContainer node) {
+    return CamundaClient.newClientBuilder()
         .grpcAddress(node.getGrpcAddress())
         .restAddress(node.getRestAddress())
         .usePlaintext()

@@ -17,7 +17,7 @@ package io.zeebe.containers.examples.exporter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.client.CamundaClient;
 import io.camunda.zeebe.protocol.record.Record;
 import io.camunda.zeebe.protocol.record.ValueType;
 import io.camunda.zeebe.protocol.record.intent.MessageIntent;
@@ -68,7 +68,7 @@ final class BrokerWithDebugExporterIT {
   @Test
   void shouldReadExportedRecords() {
     // given
-    try (final ZeebeClient client = TestSupport.newZeebeClient(container)) {
+    try (final CamundaClient client = TestSupport.newZeebeClient(container)) {
 
       // when
       client

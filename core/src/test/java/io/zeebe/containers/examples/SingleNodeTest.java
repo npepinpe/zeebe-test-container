@@ -15,10 +15,10 @@
  */
 package io.zeebe.containers.examples;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
-import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
-import io.camunda.zeebe.client.api.worker.JobWorker;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.DeploymentEvent;
+import io.camunda.client.api.response.ProcessInstanceResult;
+import io.camunda.client.api.worker.JobWorker;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
 import io.zeebe.containers.ZeebeContainer;
@@ -62,7 +62,7 @@ final class SingleNodeTest {
     final ProcessInstanceResult workflowInstanceResult;
 
     // when
-    try (final ZeebeClient client = TestSupport.newZeebeClient(zeebeContainer)) {
+    try (final CamundaClient client = TestSupport.newZeebeClient(zeebeContainer)) {
       try (final JobWorker ignored = createJobWorker(variables, client)) {
         deploymentEvent =
             client
@@ -91,7 +91,7 @@ final class SingleNodeTest {
   }
 
   private JobWorker createJobWorker(
-      final Map<String, Integer> variables, final ZeebeClient client) {
+      final Map<String, Integer> variables, final CamundaClient client) {
     return client
         .newWorker()
         .jobType("task")

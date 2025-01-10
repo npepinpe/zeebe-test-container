@@ -40,7 +40,7 @@ import org.testcontainers.utility.DockerImageName;
  * <p>Once started, you can build a new client for it e.g.:
  *
  * <pre>{@code
- * ZeebeClient.newClientBuilder()
+ * CamundaClient.newClientBuilder()
  *   .brokerContainerPoint(container.getExternalGatewayAddress())
  *   .usePlaintext()
  *   .build();

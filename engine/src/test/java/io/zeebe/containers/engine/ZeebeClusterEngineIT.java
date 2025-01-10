@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.within;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.command.FinalCommandStep;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.command.FinalCommandStep;
 import io.camunda.zeebe.protocol.record.Record;
 import io.zeebe.containers.ZeebeGatewayNode;
 import io.zeebe.containers.clock.ZeebeClock;
@@ -70,7 +70,7 @@ final class ZeebeClusterEngineIT {
   @Test
   void shouldCloseEverythingOnStop() {
     // given
-    final ZeebeClient client;
+    final CamundaClient client;
     final InetSocketAddress receiverAddress;
     try (final ZeebeClusterEngine engine = new ZeebeClusterEngine(cluster, recordStream)) {
       engine.start();
@@ -107,7 +107,7 @@ final class ZeebeClusterEngineIT {
       // given
 
       // when
-      final ZeebeClient client = engine.createClient();
+      final CamundaClient client = engine.createClient();
 
       // then
       assertThat((Future<?>) client.newTopologyRequest().send())

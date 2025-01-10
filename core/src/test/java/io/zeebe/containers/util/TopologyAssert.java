@@ -15,9 +15,9 @@
  */
 package io.zeebe.containers.util;
 
-import io.camunda.zeebe.client.api.response.BrokerInfo;
-import io.camunda.zeebe.client.api.response.PartitionInfo;
-import io.camunda.zeebe.client.api.response.Topology;
+import io.camunda.client.api.response.BrokerInfo;
+import io.camunda.client.api.response.PartitionInfo;
+import io.camunda.client.api.response.Topology;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

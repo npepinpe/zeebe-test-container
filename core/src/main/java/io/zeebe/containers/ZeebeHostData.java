@@ -47,6 +47,7 @@ import org.testcontainers.containers.GenericContainer;
 @API(status = Status.EXPERIMENTAL)
 public class ZeebeHostData implements ZeebeData {
   private final String hostPath;
+  private final String mountPath;
 
   /**
    * Creates a new {@link ZeebeHostData} which points to the given host path.
@@ -54,12 +55,21 @@ public class ZeebeHostData implements ZeebeData {
    * @param hostPath the path where the data will be stored on the host
    */
   public ZeebeHostData(final String hostPath) {
+    this(hostPath, ZeebeDefaults.getInstance().getDefaultDataPath());
+  }
+
+  /**
+   * Creates a new {@link ZeebeHostData} which points to the given host path.
+   *
+   * @param hostPath the path where the data will be stored on the host
+   */
+  public ZeebeHostData(final String hostPath, final String mountPath) {
     this.hostPath = hostPath;
+    this.mountPath = mountPath;
   }
 
   @Override
   public <T extends GenericContainer<T> & ZeebeBrokerNode<T>> void attach(final T container) {
-    final String containerPath = ZeebeDefaults.getInstance().getDefaultDataPath();
-    container.withFileSystemBind(hostPath, containerPath, BindMode.READ_WRITE);
+    container.withFileSystemBind(hostPath, mountPath, BindMode.READ_WRITE);
   }
 }

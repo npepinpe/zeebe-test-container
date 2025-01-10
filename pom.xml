@@ -77,7 +77,7 @@
     <version.slf4j>2.0.16</version.slf4j>
     <version.testcontainers>1.20.4</version.testcontainers>
     <version.wiremock>3.10.0</version.wiremock>
-    <version.zeebe>8.6.7</version.zeebe>
+    <version.zeebe>8.7.0-alpha3-rc5</version.zeebe>
 
     <!-- plugin version -->
     <plugin.version.checkstyle>3.6.0</plugin.version.checkstyle>

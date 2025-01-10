@@ -10,7 +10,7 @@ default:
 @build +mvnArgs='':
   ./mvnw install -DskipTests -DskipChecks -T1C {{ mvnArgs }}
 
-@rebuild: clean build
+@rebuild +mvnArgs='': clean build
 
 @lint +mvnArgs='':
   ./mvnw verify -DskipTests {{ mvnArgs }}

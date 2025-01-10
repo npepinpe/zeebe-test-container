@@ -18,9 +18,9 @@ package io.zeebe.containers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.condition.OS.LINUX;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.DeploymentEvent;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
 import io.zeebe.containers.util.TestSupport;
@@ -29,12 +29,12 @@ import io.zeebe.containers.util.TopologyAssert;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.awaitility.Awaitility;
@@ -52,14 +52,25 @@ final class ZeebeBrokerNodeTest {
   @AutoClose private static final Network NETWORK = Network.newNetwork();
 
   private static ZeebeBrokerNode<?> provideBrokerWithHostData(
-      final ZeebeBrokerNode<?> broker, final Path dataDir) {
+      final ZeebeBrokerNode<?> broker, final Path tmpDir) throws IOException {
     // configure the broker to use the same UID and GID as our current user so we can remove the
     // temporary directory at the end. Note that this is only necessary when not running the tests
     // as root
-    final ZeebeHostData data = new ZeebeHostData(dataDir.toAbsolutePath().toString());
+    Files.createDirectories(tmpDir.resolve("data"));
+    Files.createDirectories(tmpDir.resolve("logs"));
+
+    final ZeebeHostData data =
+        new ZeebeHostData(tmpDir.resolve("data").toAbsolutePath().toString());
+    final ZeebeHostData logs =
+        new ZeebeHostData(
+            tmpDir.resolve("logs").toAbsolutePath().toString(),
+            ZeebeDefaults.getInstance().getDefaultLogsPath());
+
+    // when
     final String runAsUser = TestSupport.getRunAsUser();
     broker
         .withZeebeData(data)
+        .withZeebeData(logs)
         .self()
         .withCreateContainerCmdModifier(cmd -> cmd.withUser(runAsUser));
 
@@ -155,9 +166,10 @@ final class ZeebeBrokerNodeTest {
   void shouldReuseHostDataOnRestart(
       @SuppressWarnings("unused") final String testName,
       final BrokerNodeProvider brokerNodeProvider,
-      final @TempDir Path dataDir) {
+      final @TempDir Path tempDir)
+      throws Exception {
     // given
-    try (final ZeebeBrokerNode<?> broker = brokerNodeProvider.apply(dataDir);
+    try (final ZeebeBrokerNode<?> broker = brokerNodeProvider.apply(tempDir);
         final ZeebeGatewayContainer gateway =
             new ZeebeGatewayContainer()
                 .withNetwork(NETWORK)
@@ -168,7 +180,7 @@ final class ZeebeBrokerNodeTest {
       broker.start();
       gateway.start();
 
-      try (final ZeebeClient client = TestSupport.newZeebeClient(gateway)) {
+      try (final CamundaClient client = TestSupport.newZeebeClient(gateway)) {
         // deploy a new process, which we can use on restart to assert that the data was correctly
         // reused
         final DeploymentEvent deployment = deploySampleProcess(client);
@@ -189,11 +201,11 @@ final class ZeebeBrokerNodeTest {
     }
   }
 
-  private ProcessInstanceEvent createSampleProcessInstance(final ZeebeClient client) {
+  private ProcessInstanceEvent createSampleProcessInstance(final CamundaClient client) {
     return client.newCreateInstanceCommand().bpmnProcessId("process").latestVersion().send().join();
   }
 
-  private DeploymentEvent deploySampleProcess(final ZeebeClient client) {
+  private DeploymentEvent deploySampleProcess(final CamundaClient client) {
     final BpmnModelInstance sampleProcess =
         Bpmn.createExecutableProcess("process").startEvent().endEvent().done();
     return client
@@ -203,7 +215,7 @@ final class ZeebeBrokerNodeTest {
         .join();
   }
 
-  private void awaitUntilTopologyIsComplete(final ZeebeClient client) {
+  private void awaitUntilTopologyIsComplete(final CamundaClient client) {
     Awaitility.await("until topology is complete")
         .atMost(Duration.ofSeconds(30))
         .untilAsserted(
@@ -212,7 +224,10 @@ final class ZeebeBrokerNodeTest {
                     .isComplete(1, 1, 1));
   }
 
-  private interface BrokerNodeProvider extends Function<Path, ZeebeBrokerNode<?>> {}
+  @FunctionalInterface
+  private interface BrokerNodeProvider {
+    ZeebeBrokerNode<?> apply(final Path tmpDir) throws Exception;
+  }
 
   private static final class ReuseDataTestCase implements Arguments {
     private final String testName;

@@ -15,10 +15,10 @@
  */
 package io.zeebe.containers.examples.clock;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.worker.JobHandler;
-import io.camunda.zeebe.client.api.worker.JobWorker;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.worker.JobHandler;
+import io.camunda.client.api.worker.JobWorker;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
 import io.zeebe.containers.ZeebeContainer;
@@ -78,7 +78,7 @@ final class TriggerTimerCatchEventTest {
 
     // when
     final JobHandler handler = (client, job) -> activatedJobs.add(job);
-    try (final ZeebeClient client = TestSupport.newZeebeClient(zeebeContainer);
+    try (final CamundaClient client = TestSupport.newZeebeClient(zeebeContainer);
         final JobWorker ignored = newJobWorker(handler, client)) {
       client.newDeployResourceCommand().addProcessModel(process, "process.bpmn").send().join();
       client.newCreateInstanceCommand().bpmnProcessId("process").latestVersion().send().join();
@@ -96,7 +96,7 @@ final class TriggerTimerCatchEventTest {
         .isAfterOrEqualTo(TIMER_DATE);
   }
 
-  private JobWorker newJobWorker(final JobHandler handler, final ZeebeClient client) {
+  private JobWorker newJobWorker(final JobHandler handler, final CamundaClient client) {
     return client.newWorker().jobType(JOB_TYPE).handler(handler).open();
   }
 }

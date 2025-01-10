@@ -17,8 +17,8 @@ package io.zeebe.containers.examples;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
 import io.zeebe.containers.ZeebeContainer;
@@ -57,7 +57,7 @@ final class ReusableVolumeExampleTest {
         Bpmn.createExecutableProcess("process").startEvent().endEvent().done();
 
     // when
-    try (final ZeebeClient client = TestSupport.newZeebeClient(zeebeContainer)) {
+    try (final CamundaClient client = TestSupport.newZeebeClient(zeebeContainer)) {
       client.newDeployResourceCommand().addProcessModel(process, "process.bpmn").send().join();
     }
 
@@ -68,7 +68,7 @@ final class ReusableVolumeExampleTest {
     // create a process instance from the one we previously deployed - this would fail if we hadn't
     // previously deployed our process model
     final ProcessInstanceEvent processInstance;
-    try (final ZeebeClient client = TestSupport.newZeebeClient(zeebeContainer)) {
+    try (final CamundaClient client = TestSupport.newZeebeClient(zeebeContainer)) {
       processInstance =
           client.newCreateInstanceCommand().bpmnProcessId("process").latestVersion().send().join();
     }

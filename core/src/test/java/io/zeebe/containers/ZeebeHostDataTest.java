@@ -23,6 +23,8 @@ import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse.Mount;
 import io.zeebe.containers.util.TestSupport;
 import io.zeebe.containers.util.TestcontainersSupport.DisabledIfTestcontainersCloud;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -34,19 +36,34 @@ import org.testcontainers.DockerClientFactory;
 final class ZeebeHostDataTest {
   @SuppressWarnings("resource")
   @Test
-  void shouldAttachToZeebeContainer(final @TempDir Path dataDir) {
+  void shouldAttachToZeebeContainer(final @TempDir Path tmpDir) throws IOException {
     // given
+    // configure the broker to use the same UID and GID as our current user so we can remove the
+    // temporary directory at the end. Note that this is only necessary when not running the tests
+    // as root
     final DockerClient client = DockerClientFactory.lazyClient();
     final String runAsUser = TestSupport.getRunAsUser();
+    final Path dataDir = tmpDir.resolve("data");
+    Files.createDirectories(dataDir);
+
+    // create logs directory to avoid errors since we'll be running with a different user than the
+    // usual "camunda:root"
+    Files.createDirectories(tmpDir.resolve("logs"));
 
     // when
     final InspectContainerResponse response;
     try (final ZeebeBrokerContainer container = new ZeebeBrokerContainer()) {
-      final ZeebeHostData data = new ZeebeHostData(dataDir.toString());
+      final ZeebeHostData data = new ZeebeHostData(dataDir.toAbsolutePath().toString());
+      final ZeebeHostData logs =
+          new ZeebeHostData(
+              tmpDir.resolve("logs").toAbsolutePath().toString(),
+              ZeebeDefaults.getInstance().getDefaultLogsPath());
+
       // configure the broker to use the same UID and GID as our current user, so we can remove the
       // temporary directory at the end
       container
           .withZeebeData(data)
+          .withZeebeData(logs)
           .self()
           .withCreateContainerCmdModifier(cmd -> cmd.withUser(runAsUser));
       container.start();

@@ -17,11 +17,11 @@ package io.zeebe.containers;
 
 import static org.rnorth.ducttape.unreliables.Unreliables.retryUntilTrue;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.ZeebeClientBuilder;
-import io.camunda.zeebe.client.api.response.BrokerInfo;
-import io.camunda.zeebe.client.api.response.PartitionInfo;
-import io.camunda.zeebe.client.api.response.Topology;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.CamundaClientBuilder;
+import io.camunda.client.api.response.BrokerInfo;
+import io.camunda.client.api.response.PartitionInfo;
+import io.camunda.client.api.response.Topology;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,7 +64,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
   private int replicationFactor;
   private int partitionsCount;
   private int gatewayPort;
-  private Supplier<ZeebeClientBuilder> clientBuilderProvider;
+  private Supplier<CamundaClientBuilder> clientBuilderProvider;
 
   /**
    * Creates a new topology wait strategy for a single broker/replica, which is the Zeebe default as
@@ -127,7 +127,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
     this.partitionsCount = partitionsCount;
     this.gatewayPort = gatewayPort;
 
-    this.clientBuilderProvider = () -> ZeebeClient.newClientBuilder().usePlaintext();
+    this.clientBuilderProvider = () -> CamundaClient.newClientBuilder().usePlaintext();
   }
 
   /**
@@ -186,7 +186,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
    * based on the given target. This is mostly useful if you wish to enable TLS/SSL on your gateway,
    * at which point you can configure whatever you want.
    *
-   * <p>Caveat: as the default provider applies {@link ZeebeClientBuilder#usePlaintext()}, if you
+   * <p>Caveat: as the default provider applies {@link CamundaClientBuilder#usePlaintext()}, if you
    * still wish to use plaintext, make sure to call it as well in your custom provider.
    *
    * @param clientBuilderProvider the new client builder provider
@@ -194,7 +194,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
    */
   @API(status = Status.EXPERIMENTAL)
   public ZeebeTopologyWaitStrategy forBuilder(
-      final Supplier<ZeebeClientBuilder> clientBuilderProvider) {
+      final Supplier<CamundaClientBuilder> clientBuilderProvider) {
     this.clientBuilderProvider = clientBuilderProvider;
     return this;
   }
@@ -203,7 +203,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
   protected void waitUntilReady() {
     final TopologyHolder latestTopology = new TopologyHolder();
 
-    try (final ZeebeClient client = newZeebeClient(waitStrategyTarget)) {
+    try (final CamundaClient client = newZeebeClient(waitStrategyTarget)) {
       final String containerName = waitStrategyTarget.getContainerInfo().getName();
       LOGGER.info(
           "{}: Waiting for {} for topology to have at least {} brokers, {} partitions with "
@@ -233,7 +233,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
     }
   }
 
-  private ZeebeClient newZeebeClient(final WaitStrategyTarget waitStrategyTarget) {
+  private CamundaClient newZeebeClient(final WaitStrategyTarget waitStrategyTarget) {
     //noinspection HttpUrlsUsage
     final URI gatewayAddress =
         URI.create(
@@ -317,7 +317,7 @@ public class ZeebeTopologyWaitStrategy extends AbstractWaitStrategy {
     return partitions;
   }
 
-  private Topology getTopology(final ZeebeClient client) {
+  private Topology getTopology(final CamundaClient client) {
     return client
         .newTopologyRequest()
         .send()

@@ -17,8 +17,8 @@ package io.zeebe.containers.examples.archive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.zeebe.containers.ZeebeContainer;
 import io.zeebe.containers.ZeebeDefaults;
@@ -103,7 +103,7 @@ final class RestartWithExtractedDataExampleTest {
   }
 
   private void deployProcess(final ZeebeContainer container) {
-    try (final ZeebeClient client = TestSupport.newZeebeClient(container)) {
+    try (final CamundaClient client = TestSupport.newZeebeClient(container)) {
       client
           .newDeployResourceCommand()
           .addProcessModel(
@@ -115,7 +115,7 @@ final class RestartWithExtractedDataExampleTest {
   }
 
   private ProcessInstanceEvent createProcessInstance(final ZeebeContainer container) {
-    try (final ZeebeClient client = TestSupport.newZeebeClient(container)) {
+    try (final CamundaClient client = TestSupport.newZeebeClient(container)) {
       return client
           .newCreateInstanceCommand()
           .bpmnProcessId(PROCESS_ID)

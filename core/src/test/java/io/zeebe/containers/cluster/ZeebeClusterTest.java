@@ -17,8 +17,8 @@ package io.zeebe.containers.cluster;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.Topology;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.Topology;
 import io.zeebe.containers.ZeebeGatewayNode;
 import io.zeebe.containers.util.TopologyAssert;
 import org.junit.jupiter.api.AutoClose;
@@ -47,7 +47,7 @@ final class ZeebeClusterTest {
 
     // then
     final Topology topology;
-    try (final ZeebeClient client = cluster.newClientBuilder().build()) {
+    try (final CamundaClient client = cluster.newClientBuilder().build()) {
       topology = client.newTopologyRequest().send().join();
     }
 
@@ -81,7 +81,7 @@ final class ZeebeClusterTest {
     // then
     for (final ZeebeGatewayNode<?> gateway : cluster.getGateways().values()) {
       final Topology topology;
-      try (final ZeebeClient client =
+      try (final CamundaClient client =
           cluster
               .newClientBuilder()
               .grpcAddress(gateway.getGrpcAddress())
@@ -121,7 +121,7 @@ final class ZeebeClusterTest {
 
     // then
     final Topology topology;
-    try (final ZeebeClient client = cluster.newClientBuilder().build()) {
+    try (final CamundaClient client = cluster.newClientBuilder().build()) {
       topology = client.newTopologyRequest().send().join();
     }
 
@@ -155,8 +155,8 @@ final class ZeebeClusterTest {
 
     // then
     for (final ZeebeGatewayNode<?> gateway : cluster.getGateways().values()) {
-      try (final ZeebeClient client =
-          ZeebeClient.newClientBuilder()
+      try (final CamundaClient client =
+          CamundaClient.newClientBuilder()
               .usePlaintext()
               .grpcAddress(gateway.getGrpcAddress())
               .restAddress(gateway.getRestAddress())

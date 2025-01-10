@@ -15,7 +15,7 @@
  */
 package io.zeebe.containers.util;
 
-import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.client.CamundaClient;
 import io.zeebe.containers.ZeebeGatewayNode;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,8 +57,8 @@ public final class TestSupport {
   }
 
   /** Returns a client for the given gateway, using a plaintext connection. */
-  public static ZeebeClient newZeebeClient(final ZeebeGatewayNode<?> gateway) {
-    return ZeebeClient.newClientBuilder()
+  public static CamundaClient newZeebeClient(final ZeebeGatewayNode<?> gateway) {
+    return CamundaClient.newClientBuilder()
         .usePlaintext()
         .grpcAddress(gateway.getGrpcAddress())
         .restAddress(gateway.getRestAddress())

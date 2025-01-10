@@ -15,8 +15,8 @@
  */
 package io.zeebe.containers.engine.examples;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.model.bpmn.Bpmn;
 import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
 import io.camunda.zeebe.process.test.assertions.BpmnAssert;
@@ -62,7 +62,7 @@ final class ClusterEngineExampleIT {
     final ProcessInstanceEvent processInstance;
 
     // when
-    try (final ZeebeClient client = engine.createClient()) {
+    try (final CamundaClient client = engine.createClient()) {
       client.newDeployResourceCommand().addProcessModel(processModel, "process.bpmn").send().join();
       processInstance =
           client.newCreateInstanceCommand().bpmnProcessId("process").latestVersion().send().join();

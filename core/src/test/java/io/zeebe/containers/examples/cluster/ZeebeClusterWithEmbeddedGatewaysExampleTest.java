@@ -15,9 +15,9 @@
  */
 package io.zeebe.containers.examples.cluster;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.BrokerInfo;
-import io.camunda.zeebe.client.api.response.Topology;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.BrokerInfo;
+import io.camunda.client.api.response.Topology;
 import io.zeebe.containers.cluster.ZeebeCluster;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +60,7 @@ final class ZeebeClusterWithEmbeddedGatewaysExampleTest {
     final Topology topology;
 
     // when
-    try (final ZeebeClient client = cluster.newClientBuilder().build()) {
+    try (final CamundaClient client = cluster.newClientBuilder().build()) {
       topology = client.newTopologyRequest().send().join(5, TimeUnit.SECONDS);
     }
 

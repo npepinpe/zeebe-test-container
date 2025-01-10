@@ -16,9 +16,9 @@
 package io.zeebe.containers.engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.ZeebeClientBuilder;
-import io.camunda.zeebe.client.impl.ZeebeObjectMapper;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.CamundaClientBuilder;
+import io.camunda.client.impl.CamundaObjectMapper;
 import io.camunda.zeebe.process.test.api.RecordStreamSource;
 import io.zeebe.containers.ZeebeGatewayNode;
 import io.zeebe.containers.ZeebeNode;
@@ -42,7 +42,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(status = Status.INTERNAL)
 final class ZeebeClusterEngine implements TestAwareContainerEngine {
-  private final List<ZeebeClient> clients = new ArrayList<>();
+  private final List<CamundaClient> clients = new ArrayList<>();
   private final DebugReceiverStream recordStream;
   private final ZeebeCluster cluster;
   private final Collection<ZeebeClock> clocks;
@@ -69,13 +69,13 @@ final class ZeebeClusterEngine implements TestAwareContainerEngine {
   }
 
   @Override
-  public ZeebeClient createClient() {
+  public CamundaClient createClient() {
     return createClient(UnaryOperator.identity());
   }
 
   @Override
-  public ZeebeClient createClient(final ObjectMapper customObjectMapper) {
-    return createClient(b -> b.withJsonMapper(new ZeebeObjectMapper(customObjectMapper)));
+  public CamundaClient createClient(final ObjectMapper customObjectMapper) {
+    return createClient(b -> b.withJsonMapper(new CamundaObjectMapper(customObjectMapper)));
   }
 
   @SuppressWarnings("deprecation")
@@ -115,15 +115,15 @@ final class ZeebeClusterEngine implements TestAwareContainerEngine {
     CloseHelper.closeAll(cluster, recordStream);
   }
 
-  private ZeebeClient createClient(final UnaryOperator<ZeebeClientBuilder> configurator) {
+  private CamundaClient createClient(final UnaryOperator<CamundaClientBuilder> configurator) {
     final ZeebeGatewayNode<?> gateway = cluster.getAvailableGateway();
-    final ZeebeClientBuilder builder =
+    final CamundaClientBuilder builder =
         configurator.apply(
-            ZeebeClient.newClientBuilder()
+            CamundaClient.newClientBuilder()
                 .usePlaintext()
                 .grpcAddress(gateway.getGrpcAddress())
                 .restAddress(gateway.getRestAddress()));
-    final ZeebeClient client = builder.build();
+    final CamundaClient client = builder.build();
     clients.add(client);
 
     return client;
